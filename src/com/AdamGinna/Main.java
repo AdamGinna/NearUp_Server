@@ -7,7 +7,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         String clientSentence;
-        String capitalizedSentence;
         ServerSocket welcome = new ServerSocket(6789);
 
         while (true) {
@@ -16,9 +15,30 @@ public class Main {
             DataOutputStream ToClient = new DataOutputStream(connectionSocket.getOutputStream());
             clientSentence = FromClient.readLine();
             System.out.println("Received: " + clientSentence);
-            capitalizedSentence = clientSentence.toUpperCase() + 'n';
-            ToClient.writeBytes(capitalizedSentence);
+
+            // Checking device and mode (SING IN or GEUST)
+            if(clientSentence.equals("Mguest"))           // MOBILE GUEST
+            {
+                Serve Mguest = new Serve(FromClient,ToClient,false);
+                Mguest.run();
+            }
+            else if(clientSentence.equals("Mlogin"))       // MOBLIE SING IN
+            {
+                Serve Mlogin = new Serve(FromClient,ToClient,false);
+                Mlogin.login();
+                Mlogin.run();
+            }
+            else if(clientSentence.equals("Wguest"))       // WEB GUEST
+            {
+
+            }
+            else if(clientSentence.equals("Wlogin"))       // WEB SING IN
+            {
+
+            }
+
         }
+
 
 
     }
