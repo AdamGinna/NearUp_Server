@@ -3,17 +3,25 @@ package com.AdamGinna;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 
 public class Serve extends Thread {
 
+    private Socket socket;
     private BufferedReader FromCilent;
     private DataOutputStream ToClient;
-    private boolean loged;
+    private boolean loged = false;
 
-    public Serve(BufferedReader FromCilent, DataOutputStream ToClient,boolean loged) {
+    public Serve(Socket soc) throws IOException {
+        socket = soc;
+        this.FromCilent = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.ToClient = new DataOutputStream(socket.getOutputStream());
+    }
+
+    public Serve(BufferedReader FromCilent, DataOutputStream ToClient) {
         this.FromCilent = FromCilent;
         this.ToClient = ToClient;
-        this.loged = loged;
     }
 
     public void login(boolean loged)
@@ -21,9 +29,11 @@ public class Serve extends Thread {
         this.loged = loged;
     }
 
-    public void login()   // login mail + password
+    public boolean login()   // login mail + password
     {
         this.loged = true;
+
+        return loged;
     }
 
     @Override

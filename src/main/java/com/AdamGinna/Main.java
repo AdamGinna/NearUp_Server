@@ -19,12 +19,12 @@ public class Main {
             // Checking device and mode (SING IN or GEUST)
             if(clientSentence.equals("Mguest"))           // MOBILE GUEST
             {
-                Serve Mguest = new Serve(FromClient,ToClient,false);
+                Serve Mguest = new Serve(connectionSocket);
                 Mguest.run();
             }
             else if(clientSentence.equals("Mlogin"))       // MOBLIE SING IN
             {
-                Serve Mlogin = new Serve(FromClient,ToClient,false);
+                Serve Mlogin = new Serve(connectionSocket);
                 Mlogin.login();
                 Mlogin.run();
             }
