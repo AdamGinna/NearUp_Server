@@ -47,6 +47,7 @@ public class Serve extends Thread {
 
                 while (true) {                                              //GUEST MODE
                     clientSentence = FromCilent.readLine();
+                    System.out.println(clientSentence);
                     //komunikacja i zapytania do bazydanych
                 }
             }
@@ -54,6 +55,7 @@ public class Serve extends Thread {
             {
                 while (true) {                                              //SING IN MODE
                     clientSentence = FromCilent.readLine();
+                    System.out.println(clientSentence);
                     //komunikacja i zapytania do bazydanych
                 }
             }
