@@ -19,6 +19,9 @@ public class Serve extends Thread {                                     //GUEST 
     protected DataOutputStream ToClient;
     protected boolean loged = false;
 
+
+
+
     public Serve(Socket soc, EntityManagerFactory emf) throws IOException {
         socket = soc;
         this.FromCilent = new BufferedReader(new InputStreamReader(socket.getInputStream()));

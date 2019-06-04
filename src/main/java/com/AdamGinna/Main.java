@@ -1,18 +1,33 @@
 package com.AdamGinna;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import java.io.*;
 import java.net.*;
+import java.util.List;
+
 
 public class Main {
+     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyUnit");
 
     public static void main(String[] args) {
 
+
         String clientSentence = null;
         ServerSocket welcome = null;
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyUnit");
+
+         EntityManager em= emf.createEntityManager();
+        Query q =  em.createQuery("select c from User c" );
+        List<User> adam = q.getResultList();
+        for(User u: adam)
+        System.out.println(u);
+
+
+
         try {
             welcome = new ServerSocket(6789);
+            System.out.println("IP Address:- " + welcome.getInetAddress());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -21,7 +36,9 @@ public class Main {
             Socket connectionSocket = null;
             Serve Mguest = null;
             try {
+
                 connectionSocket = welcome.accept();
+
 
             BufferedReader FromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             clientSentence = FromClient.readLine();
@@ -37,12 +54,8 @@ public class Main {
             }
             else if(clientSentence.equals("Mlogin"))       // MOBLIE SING IN
             {
-                try {
-                    Mguest = Mguest.login();
-                    Mguest.run();
-                } catch (IOException e) {
-                    Mguest.run();
-                }
+                Mguest = Mguest.login();
+                Mguest.run();
 
 
             }
@@ -53,6 +66,10 @@ public class Main {
             else if(clientSentence.equals("Wlogin"))       // WEB SING IN
             {
 
+            }
+            else
+            {
+                System.out.println(clientSentence);
             }
 
         }
