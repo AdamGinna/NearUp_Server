@@ -50,14 +50,11 @@ public class Main {
             // Checking device and mode (SING IN or GEUST)
             if(clientSentence.equals("Mguest"))           // MOBILE GUEST
             {
-                Mguest.run();
+
             }
             else if(clientSentence.equals("Mlogin"))       // MOBLIE SING IN
             {
                 Mguest = Mguest.login();
-                Mguest.run();
-
-
             }
             else if(clientSentence.equals("Wguest"))       // WEB GUEST
             {
@@ -71,6 +68,7 @@ public class Main {
             {
                 System.out.println(clientSentence);
             }
+            Mguest.run();
 
         }
 

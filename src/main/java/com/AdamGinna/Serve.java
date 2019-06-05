@@ -1,14 +1,17 @@
 package com.AdamGinna;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.swing.text.html.parser.Entity;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.net.UnknownServiceException;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class Serve extends Thread {                                     //GUEST MODE
@@ -16,7 +19,7 @@ public class Serve extends Thread {                                     //GUEST 
     protected EntityManagerFactory database;
     protected Socket socket;
     protected BufferedReader FromCilent;
-    protected DataOutputStream ToClient;
+    protected BufferedWriter ToClient;
     protected boolean loged = false;
 
 
@@ -25,12 +28,12 @@ public class Serve extends Thread {                                     //GUEST 
     public Serve(Socket soc, EntityManagerFactory emf) throws IOException {
         socket = soc;
         this.FromCilent = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.ToClient = new DataOutputStream(socket.getOutputStream());
+        this.ToClient = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         database = emf;
     }
 
 
-    public Serve(BufferedReader FromCilent, DataOutputStream ToClient) {
+    public Serve(BufferedReader FromCilent, BufferedWriter ToClient) {
         this.FromCilent = FromCilent;
         this.ToClient = ToClient;
     }
@@ -56,7 +59,7 @@ public class Serve extends Thread {                                     //GUEST 
 
         String clientSentence;
         try {
-            ToClient.writeBytes("ready");
+            ToClient.write("ready");
 
             if(loged) {
 
@@ -69,7 +72,20 @@ public class Serve extends Thread {                                     //GUEST 
             {
                 while (true) {
                     clientSentence = FromCilent.readLine();
-                    System.out.println(clientSentence);
+                    Scanner scanner = new Scanner(clientSentence);
+                    ObjectMapper mapper = new ObjectMapper();
+
+                    Object[] places = getPlaces(scanner.nextDouble(),scanner.nextDouble());
+                    String[] Jsons = new String[places.length];
+                    int i = 0;
+                    for(Object o: places) {
+                        String jsonS = mapper.writeValueAsString(o);
+                        Jsons[i] = jsonS;
+                        i++;
+                    }
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("places",places);
+                    ToClient.write(jsonObject.toString());
                 }
             }
 
@@ -80,14 +96,14 @@ public class Serve extends Thread {                                     //GUEST 
 
     }
 
-    protected Stream getPLaces(double x,double y)
+    protected Object[] getPlaces(double x, double y)
     {
         EntityManager em = database.createEntityManager();
 
         String x2 = "(P.latitude - " + x +") * (P.latitude - " + x+ ")";
         String y2 = "(P.longitude - " + y +") *  (P.longitude - " + y +")";
-        Query q= em.createQuery("SELECT * FROM places  P WHERE " + x2 + " + " + y2 + "<  0.1" );
-        return q.getResultList().stream();
+        Query q= em.createQuery("SELECT P FROM places  P WHERE " + x2 + " + " + y2 + "<  0.1" );
+        return q.getResultList().stream().sorted().toArray();
     }
 
     public Socket getSocket() {

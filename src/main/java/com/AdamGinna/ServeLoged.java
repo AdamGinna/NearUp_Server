@@ -18,24 +18,14 @@ public class ServeLoged extends Serve {                             //SING IN MO
 
         String clientSentence;
         try {
-            ToClient.writeBytes("ready");
-
-            if(loged) {
+            ToClient.write("ready");
 
                 while (true) {
                     clientSentence = FromCilent.readLine();
                     System.out.println(clientSentence);
                     //komunikacja i zapytania do bazy danych
                 }
-            }
-            else
-            {
-                while (true) {
-                    clientSentence = FromCilent.readLine();
-                    System.out.println(clientSentence);
-                    //komunikacja i zapytania do bazy danych
-                }
-            }
+
 
         } catch (IOException e) {
             e.printStackTrace();
