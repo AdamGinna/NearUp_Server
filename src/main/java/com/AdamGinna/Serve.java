@@ -1,17 +1,17 @@
 package com.AdamGinna;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONObject;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
-import javax.swing.text.html.parser.Entity;
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownServiceException;
-import java.util.ArrayList;
+
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Serve extends Thread {                                     //GUEST MODE
@@ -60,32 +60,23 @@ public class Serve extends Thread {                                     //GUEST 
         String clientSentence;
         try {
             ToClient.write("ready");
+            ToClient.newLine();
+            ToClient.flush();
+
 
             if(loged) {
 
                 ServeLoged n = new ServeLoged(socket,database);
                 n.run();
                 this.interrupt();
-
             }
             else
             {
                 while (true) {
-                    clientSentence = FromCilent.readLine();
-                    Scanner scanner = new Scanner(clientSentence);
-                    ObjectMapper mapper = new ObjectMapper();
-
-                    Object[] places = getPlaces(scanner.nextDouble(),scanner.nextDouble());
-                    String[] Jsons = new String[places.length];
-                    int i = 0;
-                    for(Object o: places) {
-                        String jsonS = mapper.writeValueAsString(o);
-                        Jsons[i] = jsonS;
-                        i++;
+                    if((clientSentence = FromCilent.readLine()) != null) {
+                        System.out.println(clientSentence);
+                        serve(clientSentence);
                     }
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("places",places);
-                    ToClient.write(jsonObject.toString());
                 }
             }
 
@@ -96,14 +87,41 @@ public class Serve extends Thread {                                     //GUEST 
 
     }
 
-    protected Object[] getPlaces(double x, double y)
+    public void serve(String mode) throws IOException {
+
+        if(mode.equals("places"))
+        {
+            String clientSentence;
+            clientSentence = FromCilent.readLine();
+            Scanner scanner = new Scanner(clientSentence);
+            ObjectMapper mapper = new ObjectMapper();
+
+            List<Place> places = getPlaces(scanner.nextDouble(),scanner.nextDouble());
+
+            int i = 0;
+            for(Place o: places) {
+                String jsonS = mapper.writeValueAsString(o);
+                ToClient.write(jsonS);
+                ToClient.newLine();
+            }
+            ToClient.write("*End*");
+            ToClient.newLine();
+            ToClient.flush();
+
+        }
+    }
+
+    protected List<Place> getPlaces(double x, double y)
     {
         EntityManager em = database.createEntityManager();
 
         String x2 = "(P.latitude - " + x +") * (P.latitude - " + x+ ")";
         String y2 = "(P.longitude - " + y +") *  (P.longitude - " + y +")";
-        Query q= em.createQuery("SELECT P FROM places  P WHERE " + x2 + " + " + y2 + "<  0.1" );
-        return q.getResultList().stream().sorted().toArray();
+        //Query q= em.createQuery("SELECT P FROM Place P WHERE " + x2 + " + " + y2 + "<  0.1" );
+        Query q= em.createQuery("SELECT P FROM Place P");
+        List<Place> list = q.getResultList();
+
+        return list.stream().sorted((p1,p2)->Place.compare(p1,p2,x,y)).collect(Collectors.toList());
     }
 
     public Socket getSocket() {

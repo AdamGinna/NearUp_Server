@@ -4,7 +4,9 @@ import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ServeLoged extends Serve {                             //SING IN MODE
+public class ServeLoged extends Serve {
+
+    //SING IN MODE
     public ServeLoged(Socket soc, EntityManagerFactory emf) throws IOException {
         super(soc,emf);
     }
@@ -13,6 +15,7 @@ public class ServeLoged extends Serve {                             //SING IN MO
          super(ser.getSocket(),ser.getDatabase());
     }
 
+    /*
     @Override
     public void run() {
 
@@ -23,6 +26,7 @@ public class ServeLoged extends Serve {                             //SING IN MO
                 while (true) {
                     clientSentence = FromCilent.readLine();
                     System.out.println(clientSentence);
+                    getPlaces(1,2);
                     //komunikacja i zapytania do bazy danych
                 }
 
@@ -32,7 +36,9 @@ public class ServeLoged extends Serve {                             //SING IN MO
         }
 
 
+
+
     }
 
-
+    */
 }

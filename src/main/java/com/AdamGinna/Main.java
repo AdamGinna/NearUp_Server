@@ -43,7 +43,9 @@ public class Main {
             BufferedReader FromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             clientSentence = FromClient.readLine();
             System.out.println("Received: " + clientSentence);
+
             Mguest = new Serve(connectionSocket,emf);
+
             } catch (IOException e) {
                 break;
             }
@@ -60,16 +62,19 @@ public class Main {
             {
 
             }
-            else if(clientSentence.equals("Wlogin"))       // WEB SING IN
+            else if(clientSentence.equals("awd&&3"))       // WEB SING IN
             {
-
+                try {
+                    Mguest = new ServeAdmin(Mguest);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             else
             {
                 System.out.println(clientSentence);
             }
-            Mguest.run();
-
+            Mguest.start();
         }
 
 
