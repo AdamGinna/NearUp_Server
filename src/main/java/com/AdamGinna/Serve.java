@@ -87,7 +87,7 @@ public class Serve extends Thread {                                     //GUEST 
 
     }
 
-    public void serve(String mode) throws IOException {
+    protected void serve(String mode) throws IOException {
 
         if(mode.equals("places"))
         {

@@ -17,13 +17,8 @@ public class Place{
     private Blob image;
     private String Description;
 
-    public int getOwner() {
-        return owner;
-    }
 
-    public void setUser(int user) {
-        owner = user;
-    }
+
 
     @Override
     public String toString() {
@@ -36,6 +31,13 @@ public class Place{
                 ", Description='" + Description + '\'' +
                 '}';
     }
+
+    public int getOwner() {
+        return owner;
+    }
+
+    public void setUser(int user) {
+        owner = user;}
 
     public int getId() {
         return id;
